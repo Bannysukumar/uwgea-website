@@ -28,7 +28,7 @@ export default function LoginPage() {
     setSubmitting(true);
     const result = await dispatch(loginUser(data));
     setSubmitting(false);
-    if (loginUser.fulfilled.match(result)) navigate('/');
+    if (loginUser.fulfilled.match(result)) navigate('/admin');
   };
 
   return (

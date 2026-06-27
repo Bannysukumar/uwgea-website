@@ -8,6 +8,7 @@ import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase/app';
 import { COLLECTIONS } from '@/firebase/collections';
 import PageHeader from '@/components/common/PageHeader';
+import { adminPath } from '@/utils/paths';
 import { usePermissions } from '@/hooks/usePermissions';
 import { toast } from 'react-toastify';
 
@@ -74,7 +75,7 @@ export default function PlansPage() {
         title="Subscription Plans"
         subtitle="Create and manage membership plans — changes sync instantly to the app"
         actionLabel={can('subscription_plans', 'write') ? 'Add Plan' : null}
-        onAction={can('subscription_plans', 'write') ? () => navigate('/subscription-plans/new') : null}
+        onAction={can('subscription_plans', 'write') ? () => navigate(adminPath('/subscription-plans/new')) : null}
       />
 
       <MaterialReactTable
@@ -91,7 +92,7 @@ export default function PlansPage() {
               <Tooltip title="Edit plan">
                 <IconButton
                   size="small"
-                  onClick={() => navigate(`/subscription-plans/${row.original.id}/edit`)}
+                  onClick={() => navigate(adminPath(`/subscription-plans/${row.original.id}/edit`))}
                 >
                   <EditIcon fontSize="small" />
                 </IconButton>

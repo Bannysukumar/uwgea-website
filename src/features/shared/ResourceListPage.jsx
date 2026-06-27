@@ -11,6 +11,7 @@ import { getModuleConfig } from '@/config/modules';
 import { formatDateTime } from '@/utils/formatters';
 import { exportToExcel } from '@/utils/export';
 import PageHeader from '@/components/common/PageHeader';
+import { adminPath } from '@/utils/paths';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useAppSelector } from '@/redux/hooks';
 
@@ -83,7 +84,7 @@ export default function ResourceListPage({ moduleKey, extraActions }) {
         title={config.title}
         subtitle={`Manage ${config.title.toLowerCase()} for SGSW app`}
         actionLabel={can(config.module, 'write') ? `Add ${config.singular}` : null}
-        onAction={can(config.module, 'write') ? () => navigate(`/${config.module}/new`) : null}
+        onAction={can(config.module, 'write') ? () => navigate(adminPath(`/${config.module}/new`)) : null}
       >
         {can(config.module, 'export') && (
           <Button startIcon={<FileDownloadIcon />} onClick={handleExport}>
@@ -106,7 +107,7 @@ export default function ResourceListPage({ moduleKey, extraActions }) {
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             {can(config.module, 'edit') && (
               <Tooltip title="Edit">
-                <IconButton onClick={() => navigate(`/${config.module}/${row.original.id}/edit`)}>
+                <IconButton onClick={() => navigate(adminPath(`/${config.module}/${row.original.id}/edit`))}>
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Tooltip>

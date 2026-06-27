@@ -19,6 +19,7 @@ import { createCrudService, logActivity } from '@/firebase/firestoreService';
 import { uploadFile } from '@/firebase/storageService';
 import { getModuleConfig, getFieldDef } from '@/config/modules';
 import PageHeader from '@/components/common/PageHeader';
+import { adminPath } from '@/utils/paths';
 import RichTextEditor from '@/components/editor/RichTextEditor';
 import FileDropzone from '@/components/forms/FileDropzone';
 import { useAppSelector } from '@/redux/hooks';
@@ -105,7 +106,7 @@ export default function ResourceFormPage({ moduleKey }) {
         await logActivity('create', config.module, { id: newId }, profile?.uid);
         toast.success('Created successfully');
       }
-      navigate(`/${config.module}`);
+      navigate(adminPath(`/${config.module}`));
     } catch (err) {
       toast.error(err.message || 'Save failed');
     }
@@ -211,7 +212,7 @@ export default function ResourceFormPage({ moduleKey }) {
               <Button type="submit" variant="contained" disabled={loading}>
                 {isEdit ? 'Update' : 'Create'}
               </Button>
-              <Button variant="outlined" onClick={() => navigate(`/${config.module}`)}>
+              <Button variant="outlined" onClick={() => navigate(adminPath(`/${config.module}`))}>
                 Cancel
               </Button>
             </Stack>

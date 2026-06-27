@@ -41,6 +41,19 @@ export const COLLECTIONS = {
   SUBSCRIPTION_HISTORY: 'subscription_history',
   FEATURE_PERMISSIONS: 'feature_permissions',
   INVOICES: 'invoices',
+  // Public website
+  WEBSITE_SETTINGS: 'website_settings',
+  WEBSITE_STATISTICS: 'website_statistics',
+  WEBSITE_QUICK_ACTIONS: 'website_quick_actions',
+  DISTRICT_COMMITTEES: 'district_committees',
+  EMPLOYEE_ISSUES: 'employee_issues',
+  WELFARE_SCHEMES: 'welfare_schemes',
+  GOVERNMENT_ORDERS: 'government_orders',
+  GRIEVANCES: 'grievances',
+  CONTACT_MESSAGES: 'contact_messages',
+  PRESS_NOTES: 'press_notes',
+  CIRCULARS: 'circulars',
+  COURT_ORDERS: 'court_orders',
 };
 
 export const STORAGE_PATHS = {
@@ -56,6 +69,7 @@ export const STORAGE_PATHS = {
   ADS: 'ads/',
   CERTIFICATES: 'certificates/',
   PLANS: 'plans/',
+  WEBSITE: 'website/',
 };
 
 export const FIELDS = {
