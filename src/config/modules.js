@@ -7,6 +7,7 @@ const baseFields = {
   status: { name: 'status', label: 'Status', type: 'select', options: ['active', 'inactive', 'pending', 'draft', 'published', 'archived', 'blocked', 'suspended'] },
   category: { name: 'category', label: 'Category', type: 'text' },
   image: { name: 'image_url', label: 'Image', type: 'image', storage: STORAGE_PATHS.GALLERY },
+  sponsor_logo: { name: 'logo_url', label: 'Sponsor Logo', type: 'image', storage: STORAGE_PATHS.WEBSITE },
   priority: { name: 'priority', label: 'Priority', type: 'number' },
   is_active: { name: 'is_active', label: 'Active', type: 'switch' },
   email: { name: 'email', label: 'Email', type: 'email' },
@@ -23,7 +24,28 @@ const baseFields = {
   location: { name: 'location', label: 'Venue', type: 'text' },
   scheduled_at: { name: 'scheduled_at', label: 'Scheduled At', type: 'datetime' },
   end_date: { name: 'end_date', label: 'End Date', type: 'datetime' },
-  file_url: { name: 'file_url', label: 'File', type: 'file', storage: STORAGE_PATHS.DOCUMENTS },
+  file_url: {
+    name: 'file_url',
+    label: 'PDF Document',
+    type: 'file',
+    storage: STORAGE_PATHS.DOCUMENTS,
+    accept: { 'application/pdf': ['.pdf'] },
+  },
+  go_category: {
+    name: 'category',
+    label: 'Category',
+    type: 'select',
+    required: true,
+    options: ["GO's", 'Proceedings', 'Circulars', 'Notifications', 'Court Orders'],
+  },
+  go_pdf: {
+    name: 'file_url',
+    label: 'PDF Document',
+    type: 'file',
+    storage: STORAGE_PATHS.DOCUMENTS,
+    accept: { 'application/pdf': ['.pdf'] },
+    required: true,
+  },
   link_url: { name: 'link_url', label: 'Link URL', type: 'text' },
   content: { name: 'content', label: 'Content', type: 'richtext' },
   membership_id: { name: 'membership_id', label: 'Membership #', type: 'text' },
@@ -68,6 +90,7 @@ const baseFields = {
   color: { name: 'color', label: 'Color (hex)', type: 'text' },
   link: { name: 'link', label: 'Link Path', type: 'text' },
   subject: { name: 'subject', label: 'Subject', type: 'text' },
+  qr_image: { name: 'qr_code_url', label: 'QR Code Image', type: 'image', storage: STORAGE_PATHS.WEBSITE },
 };
 
 export const MODULES = {
@@ -336,7 +359,7 @@ export const MODULES = {
     title: 'Government Orders',
     singular: 'Document',
     columns: ['title', 'category', 'status', 'created_at'],
-    formFields: ['title', 'category', 'description', 'status', 'file_url'],
+    formFields: ['title', 'go_category', 'description', 'status', 'go_pdf'],
     storagePath: STORAGE_PATHS.DOCUMENTS,
   },
   grievances: {
@@ -371,6 +394,15 @@ export const MODULES = {
     singular: 'Quick Action',
     columns: ['title', 'link', 'display_order', 'is_active'],
     formFields: ['title', 'description', 'icon', 'color', 'link', 'display_order', 'is_active'],
+  },
+  sponsors: {
+    collection: COLLECTIONS.SPONSORS,
+    module: 'sponsors',
+    title: 'Sponsors',
+    singular: 'Sponsor',
+    columns: ['name', 'description', 'display_order', 'is_active'],
+    formFields: ['name', 'description', 'sponsor_logo', 'display_order', 'is_active'],
+    storagePath: STORAGE_PATHS.WEBSITE,
   },
 };
 

@@ -24,12 +24,13 @@ import RichTextEditor from '@/components/editor/RichTextEditor';
 import FileDropzone from '@/components/forms/FileDropzone';
 import { useAppSelector } from '@/redux/hooks';
 
-const buildSchema = (fields) => {
+const buildSchema = (fields, isEdit = false) => {
   const shape = {};
   fields.forEach((key) => {
     const def = getFieldDef(key);
     if (!def || def.readOnly) return;
-    if (def.required) {
+    const skipRequired = isEdit && def.name === 'file_url';
+    if (def.required && !skipRequired) {
       shape[def.name] = yup.string().required(`${def.label} is required`);
     } else {
       shape[def.name] = yup.mixed().nullable();
@@ -57,6 +58,9 @@ const normalizePayload = (module, payload, isEdit) => {
   if (module === 'users' && next.image_url && !next.photo) {
     next.photo = next.image_url;
   }
+  if (module === 'government_orders') {
+    if (!next.status) next.status = 'published';
+  }
   return next;
 };
 
@@ -69,12 +73,18 @@ export default function ResourceFormPage({ moduleKey }) {
   const profile = useAppSelector((s) => s.auth.profile);
   const [loading, setLoading] = useState(isEdit);
 
-  const schema = useMemo(() => buildSchema(config.formFields), [config.formFields]);
+  const schema = useMemo(() => buildSchema(config.formFields, isEdit), [config.formFields, isEdit]);
 
   const { control, handleSubmit, reset, setValue, watch } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {},
   });
+
+  useEffect(() => {
+    if (!isEdit && config.module === 'government_orders') {
+      reset({ status: 'published' });
+    }
+  }, [isEdit, config.module, reset]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -93,6 +103,9 @@ export default function ResourceFormPage({ moduleKey }) {
   const onSubmit = async (values) => {
     try {
       let payload = { ...values };
+      if (config.module === 'government_orders' && !payload.file_url) {
+        payload.file_url = watch('file_url') || '';
+      }
       if (config.formFields.includes('options') && typeof payload.options === 'string') {
         payload.options = payload.options.split(',').map((o) => o.trim()).filter(Boolean);
       }
@@ -162,11 +175,12 @@ export default function ResourceFormPage({ moduleKey }) {
     }
 
     if (def.type === 'image' || def.type === 'file') {
+      const accept = def.accept || (def.type === 'image' ? { 'image/*': [] } : { 'application/pdf': ['.pdf'] });
       return (
         <FileDropzone
           key={def.name}
           label={def.label}
-          accept={def.type === 'image' ? { 'image/*': [] } : undefined}
+          accept={accept}
           onUploaded={(url) => setValue(def.name, url)}
           currentUrl={watch(def.name)}
           storagePath={def.storage || config.storagePath}
@@ -199,7 +213,10 @@ export default function ResourceFormPage({ moduleKey }) {
 
   return (
     <Box>
-      <PageHeader title={isEdit ? `Edit ${config.singular}` : `New ${config.singular}`} />
+      <PageHeader
+        title={isEdit ? `Edit ${config.singular}` : `New ${config.singular}`}
+        subtitle={config.module === 'government_orders' ? 'Upload a PDF — set status to Published to show on the public website' : undefined}
+      />
       <Card>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>

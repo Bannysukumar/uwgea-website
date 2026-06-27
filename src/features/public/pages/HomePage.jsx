@@ -4,12 +4,14 @@ import StatisticsSection from '@/features/public/components/StatisticsSection';
 import FounderSection from '@/features/public/components/FounderSection';
 import MissionVisionSection from '@/features/public/components/MissionVisionSection';
 import QuickActionsSection from '@/features/public/components/QuickActionsSection';
+import SponsorshipDonationSection from '@/features/public/components/SponsorshipDonationSection';
 import LatestUpdatesSection from '@/features/public/components/LatestUpdatesSection';
 import LeadershipPreview from '@/features/public/components/LeadershipPreview';
 import {
   useWebsiteSettings,
   useWebsiteStatistics,
   useQuickActions,
+  useSponsors,
   usePublicCollection,
 } from '@/features/public/hooks/useWebsiteData';
 import { COLLECTIONS } from '@/firebase/collections';
@@ -18,6 +20,7 @@ export default function HomePage() {
   const { settings } = useWebsiteSettings();
   const { items: stats } = useWebsiteStatistics();
   const { items: quickActions } = useQuickActions();
+  const { items: sponsors } = useSponsors();
   const { items: news } = usePublicCollection(COLLECTIONS.NEWS, { limitCount: 4 });
   const { items: videos } = usePublicCollection(COLLECTIONS.VIDEOS, { limitCount: 2 });
   const { items: orders } = usePublicCollection(COLLECTIONS.GOVERNMENT_ORDERS, { limitCount: 2 });
@@ -32,6 +35,9 @@ export default function HomePage() {
         <MissionVisionSection mission={settings.mission} vision={settings.vision} />
       )}
       {vis.quick_actions !== false && <QuickActionsSection actions={quickActions} />}
+      {vis.sponsorship_donation !== false && (
+        <SponsorshipDonationSection donation={settings.donation} sponsors={sponsors} />
+      )}
       {vis.latest_updates !== false && (
         <LatestUpdatesSection news={news} videos={videos} orders={orders} />
       )}

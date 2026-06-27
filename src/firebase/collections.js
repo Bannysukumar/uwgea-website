@@ -51,6 +51,7 @@ export const COLLECTIONS = {
   GOVERNMENT_ORDERS: 'government_orders',
   GRIEVANCES: 'grievances',
   CONTACT_MESSAGES: 'contact_messages',
+  SPONSORS: 'sponsors',
   PRESS_NOTES: 'press_notes',
   CIRCULARS: 'circulars',
   COURT_ORDERS: 'court_orders',

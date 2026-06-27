@@ -4,8 +4,9 @@ import {
   Box, Button, Card, CardContent, Stack, TextField, Typography, Tabs, Tab, Switch, FormControlLabel,
 } from '@mui/material';
 import { db } from '@/firebase/app';
-import { COLLECTIONS } from '@/firebase/collections';
+import { COLLECTIONS, STORAGE_PATHS } from '@/firebase/collections';
 import PageHeader from '@/components/common/PageHeader';
+import FileDropzone from '@/components/forms/FileDropzone';
 import { DEFAULT_WEBSITE } from '@/features/public/constants/defaults';
 import { toast } from 'react-toastify';
 
@@ -41,6 +42,7 @@ export default function WebsiteSettingsPage() {
           footer: { ...prev.footer, ...snap.data().footer },
           seo: { ...prev.seo, ...snap.data().seo },
           section_visibility: { ...prev.section_visibility, ...snap.data().section_visibility },
+          donation: { ...prev.donation, ...snap.data().donation },
         }));
       }
       setLoading(false);
@@ -58,15 +60,41 @@ export default function WebsiteSettingsPage() {
 
   if (loading) return null;
 
+  const pageMap = [
+    { page: 'Home — Hero, Founder, Mission', tab: 'Hero / Founder / Mission & Vision tabs' },
+    { page: 'Home — Header & Footer branding', tab: 'Organization / Contact & Footer tabs' },
+    { page: 'Home — Sponsorship & Donation (bank + QR)', tab: 'Sponsorship & Donation tab' },
+    { page: 'About, Privacy, Terms pages', tab: 'SEO & Pages tab' },
+    { page: 'Contact page details', tab: 'Contact & Footer tab' },
+    { page: 'Home statistics, quick actions, sponsors', tab: 'Sidebar → Public Website section' },
+    { page: 'Leadership, News, Gallery, GOs, etc.', tab: 'Sidebar → Public Website section' },
+  ];
+
   return (
     <Box>
-      <PageHeader title="Website CMS" subtitle="Manage public website content — updates live without redeploy" />
+      <PageHeader
+        title="Site Settings & Pages"
+        subtitle="Manage homepage sections and static pages — changes appear on uwgea.org instantly"
+      />
+      <Card sx={{ mb: 2, bgcolor: 'primary.50', border: '1px solid', borderColor: 'primary.light' }}>
+        <CardContent>
+          <Typography variant="subtitle2" fontWeight={700} gutterBottom color="primary.main">
+            Public website page guide
+          </Typography>
+          {pageMap.map((row) => (
+            <Typography key={row.page} variant="body2" sx={{ mb: 0.5 }}>
+              <strong>{row.page}</strong> → {row.tab}
+            </Typography>
+          ))}
+        </CardContent>
+      </Card>
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }} variant="scrollable">
         <Tab label="Hero" />
         <Tab label="Organization" />
         <Tab label="Founder" />
         <Tab label="Mission & Vision" />
         <Tab label="Contact & Footer" />
+        <Tab label="Sponsorship & Donation" />
         <Tab label="SEO & Pages" />
         <Tab label="Sections" />
       </Tabs>
@@ -123,6 +151,43 @@ export default function WebsiteSettingsPage() {
 
       {tab === 5 && (
         <>
+          <SectionFields title="Section Headings">
+            {['section_title', 'sponsors_heading', 'donation_heading', 'qr_caption'].map((f) => (
+              <TextField key={f} label={f.replace(/_/g, ' ')} value={data.donation?.[f] || ''} onChange={(e) => set('donation', f, e.target.value)} fullWidth />
+            ))}
+            <FormControlLabel
+              control={<Switch checked={data.donation?.show_account_details !== false} onChange={(e) => set('donation', 'show_account_details', e.target.checked)} />}
+              label="Show account details label on homepage"
+            />
+          </SectionFields>
+          <SectionFields title="Bank Account Details">
+            {['account_name', 'account_number', 'bank_name', 'ifsc_code'].map((f) => (
+              <TextField key={f} label={f.replace(/_/g, ' ')} value={data.donation?.[f] || ''} onChange={(e) => set('donation', f, e.target.value)} fullWidth />
+            ))}
+          </SectionFields>
+          <SectionFields title="UPI QR Code">
+            <FileDropzone
+              label="Donation QR Code (Scanner Image)"
+              accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }}
+              storagePath={STORAGE_PATHS.WEBSITE}
+              currentUrl={data.donation?.qr_code_url}
+              onUploaded={(url) => set('donation', 'qr_code_url', url)}
+            />
+            <TextField
+              label="QR image URL (or paste link)"
+              value={data.donation?.qr_code_url || ''}
+              onChange={(e) => set('donation', 'qr_code_url', e.target.value)}
+              fullWidth
+            />
+            <Typography variant="body2" color="text.secondary">
+              Manage sponsor logos under Admin → Sponsors. This section appears on the homepage above Latest Updates.
+            </Typography>
+          </SectionFields>
+        </>
+      )}
+
+      {tab === 6 && (
+        <>
           <SectionFields title="SEO">
             {['title', 'description', 'keywords'].map((f) => (
               <TextField key={f} label={f} value={data.seo[f] || ''} onChange={(e) => set('seo', f, e.target.value)} fullWidth multiline={f !== 'title'} rows={f === 'description' ? 3 : 1} />
@@ -140,7 +205,7 @@ export default function WebsiteSettingsPage() {
         </>
       )}
 
-      {tab === 6 && (
+      {tab === 7 && (
         <SectionFields title="Homepage Section Visibility">
           {Object.entries(data.section_visibility || {}).map(([key, val]) => (
             <FormControlLabel
@@ -150,7 +215,7 @@ export default function WebsiteSettingsPage() {
             />
           ))}
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-            Statistics and Quick Actions are managed under Website Statistics and Quick Actions collections (use Firestore or add list pages later).
+            Toggle homepage sections on/off. Other website pages are managed from the sidebar under <strong>Public Website</strong>.
           </Typography>
         </SectionFields>
       )}

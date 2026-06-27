@@ -1,6 +1,16 @@
-import { Box, Container, Typography, Link, Stack, Divider } from '@mui/material';
+import { Box, Container, Typography, Link, Stack, Divider, IconButton } from '@mui/material';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { Link as RouterLink } from 'react-router-dom';
 import { PUBLIC_NAV } from '@/features/public/constants/defaults';
+
+const socialIconSx = {
+  color: '#fff',
+  bgcolor: 'rgba(255,255,255,0.1)',
+  border: '1px solid rgba(255,255,255,0.15)',
+  transition: 'transform 0.2s ease, background-color 0.2s ease',
+  '&:hover': { transform: 'translateY(-2px)' },
+};
 
 export default function PublicFooter({ settings }) {
   const org = settings.organization;
@@ -69,10 +79,41 @@ export default function PublicFooter({ settings }) {
                 {contact.email}
               </Link>
             )}
-            <Stack direction="row" spacing={2} sx={{ mt: 2, flexWrap: 'wrap' }}>
+            <Stack direction="row" spacing={1.5} sx={{ mt: 2, flexWrap: 'wrap', alignItems: 'center' }}>
               {contact.facebook && <Link href={contact.facebook} target="_blank" rel="noopener" color="inherit" variant="body2">Facebook</Link>}
               {contact.twitter && <Link href={contact.twitter} target="_blank" rel="noopener" color="inherit" variant="body2">Twitter</Link>}
-              {contact.instagram && <Link href={contact.instagram} target="_blank" rel="noopener" color="inherit" variant="body2">Instagram</Link>}
+              {contact.instagram && (
+                <IconButton
+                  component="a"
+                  href={contact.instagram}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Instagram"
+                  title="Instagram"
+                  sx={{
+                    ...socialIconSx,
+                    '&:hover': { ...socialIconSx['&:hover'], bgcolor: '#E4405F', borderColor: '#E4405F' },
+                  }}
+                >
+                  <InstagramIcon />
+                </IconButton>
+              )}
+              {contact.youtube && (
+                <IconButton
+                  component="a"
+                  href={contact.youtube}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="YouTube"
+                  title="YouTube"
+                  sx={{
+                    ...socialIconSx,
+                    '&:hover': { ...socialIconSx['&:hover'], bgcolor: '#FF0000', borderColor: '#FF0000' },
+                  }}
+                >
+                  <YouTubeIcon />
+                </IconButton>
+              )}
             </Stack>
             <Stack spacing={0.5} sx={{ mt: 2 }}>
               <Link component={RouterLink} to="/privacy" color="inherit" variant="body2">Privacy Policy</Link>

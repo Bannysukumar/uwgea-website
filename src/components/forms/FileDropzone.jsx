@@ -47,7 +47,10 @@ export default function FileDropzone({ label, onUploaded, currentUrl, storagePat
       >
         <input {...getInputProps()} />
         <CloudUploadIcon color="action" sx={{ fontSize: 40, mb: 1 }} />
-        <Typography variant="body2">Drag & drop or click to upload</Typography>
+        <Typography variant="body2">Drag & drop a PDF or click to upload</Typography>
+        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+          PDF files only
+        </Typography>
       </Box>
       {uploading && <LinearProgress sx={{ mt: 1 }} />}
       {currentUrl && (

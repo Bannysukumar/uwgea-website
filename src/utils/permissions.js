@@ -41,6 +41,7 @@ const ALL_MODULES = [
   'contact_messages',
   'website_statistics',
   'website_quick_actions',
+  'sponsors',
   'website_settings',
   'roles',
   'permissions',

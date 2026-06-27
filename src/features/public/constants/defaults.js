@@ -55,8 +55,8 @@ export const DEFAULT_WEBSITE = {
     map_embed_url: '',
     facebook: '',
     twitter: '',
-    instagram: '',
-    youtube: '',
+    instagram: 'https://www.instagram.com/p/DY0PekRz3BC/?igsh=MXg3encxZTB4Nmd5NA==',
+    youtube: 'https://youtube.com/@rajyalakshmigujjala?si=p42L0D6mCQaBFyyf',
     whatsapp: '',
   },
   seo: {
@@ -70,8 +70,21 @@ export const DEFAULT_WEBSITE = {
     founder: true,
     mission_vision: true,
     quick_actions: true,
+    sponsorship_donation: true,
     latest_updates: true,
     leadership_preview: true,
+  },
+  donation: {
+    section_title: 'Sponsorship & Donation',
+    sponsors_heading: 'Sponsors',
+    donation_heading: 'Sponsorship & Donation',
+    show_account_details: true,
+    account_name: 'United Welfare GSWS Government Employees Association',
+    account_number: '',
+    bank_name: '',
+    ifsc_code: '',
+    qr_code_url: '',
+    qr_caption: 'Scan to Donate (UPI)',
   },
 };
 

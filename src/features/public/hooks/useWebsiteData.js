@@ -14,6 +14,7 @@ const mergeDefaults = (data) => ({
   contact: { ...DEFAULT_WEBSITE.contact, ...(data?.contact || {}) },
   seo: { ...DEFAULT_WEBSITE.seo, ...(data?.seo || {}) },
   section_visibility: { ...DEFAULT_WEBSITE.section_visibility, ...(data?.section_visibility || {}) },
+  donation: { ...DEFAULT_WEBSITE.donation, ...(data?.donation || {}) },
   about: data?.about || { content: '' },
   privacy: data?.privacy || { content: '' },
   terms: data?.terms || { content: '' },
@@ -140,6 +141,44 @@ export function usePublicCollection(collectionName, { status, orderField = 'crea
       fallbackUnsub?.();
     };
   }, [collectionName, status, orderField, limitCount]);
+
+  return { items, loading };
+}
+
+export function useSponsors() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let fallbackUnsub = null;
+    const q = query(
+      collection(db, COLLECTIONS.SPONSORS),
+      where('is_active', '==', true),
+      orderBy('display_order', 'asc'),
+    );
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setItems(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        setLoading(false);
+      },
+      () => {
+        fallbackUnsub = onSnapshot(collection(db, COLLECTIONS.SPONSORS), (snap) => {
+          const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          setItems(
+            docs
+              .filter((d) => d.is_active !== false)
+              .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
+          );
+          setLoading(false);
+        });
+      },
+    );
+    return () => {
+      unsub();
+      fallbackUnsub?.();
+    };
+  }, []);
 
   return { items, loading };
 }

@@ -26,6 +26,7 @@ const SubscribersPage = lazy(() => import('@/features/subscriptions/pages/Subscr
 const TrialSettingsPage = lazy(() => import('@/features/subscriptions/pages/TrialSettingsPage'));
 const PaymentSettingsPage = lazy(() => import('@/features/subscriptions/pages/PaymentSettingsPage'));
 const WebsiteSettingsPage = lazy(() => import('@/features/website/pages/WebsiteSettingsPage'));
+const GovernmentOrdersAdminPage = lazy(() => import('@/features/government-orders/pages/GovernmentOrdersAdminPage'));
 
 const HomePage = lazy(() => import('@/features/public/pages/HomePage'));
 const AboutPage = lazy(() => import('@/features/public/pages/AboutPage'));
@@ -48,7 +49,7 @@ const Loader = () => (
   </Box>
 );
 
-const CUSTOM_ROUTES = new Set(['users']);
+const CUSTOM_ROUTES = new Set(['users', 'government_orders']);
 const ADMIN_CUSTOM = new Set(['subscription-plans', 'subscribers', 'trial-settings', 'payment-gateway', 'website-settings']);
 
 const moduleRoutes = Object.keys(MODULES)
@@ -126,6 +127,9 @@ export default function AppRoutes() {
           <Route path="users" element={<PermissionRoute module="users"><UsersPage /></PermissionRoute>} />
           <Route path="users/new" element={<PermissionRoute module="users" action="write"><ResourceFormPage moduleKey="users" /></PermissionRoute>} />
           <Route path="users/:id/edit" element={<PermissionRoute module="users" action="edit"><ResourceFormPage moduleKey="users" /></PermissionRoute>} />
+          <Route path="government_orders" element={<PermissionRoute module="government_orders"><GovernmentOrdersAdminPage /></PermissionRoute>} />
+          <Route path="government_orders/new" element={<PermissionRoute module="government_orders" action="write"><ResourceFormPage moduleKey="government_orders" /></PermissionRoute>} />
+          <Route path="government_orders/:id/edit" element={<PermissionRoute module="government_orders" action="edit"><ResourceFormPage moduleKey="government_orders" /></PermissionRoute>} />
           {moduleRoutes}
           <Route path="analytics" element={<PermissionRoute module="analytics"><AnalyticsPage /></PermissionRoute>} />
           <Route path="subscription-plans" element={<PermissionRoute module="subscription_plans"><PlansPage /></PermissionRoute>} />
