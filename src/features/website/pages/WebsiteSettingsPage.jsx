@@ -21,6 +21,22 @@ function SectionFields({ title, children }) {
   );
 }
 
+function quickLinksToText(links = []) {
+  return links.map((l) => `${l.label}|${l.path}`).join('\n');
+}
+
+function textToQuickLinks(text) {
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [label, ...rest] = line.split('|');
+      return { label: label?.trim() || '', path: rest.join('|').trim() || '/' };
+    })
+    .filter((l) => l.label);
+}
+
 export default function WebsiteSettingsPage() {
   const [tab, setTab] = useState(0);
   const [data, setData] = useState(DEFAULT_WEBSITE);
@@ -62,7 +78,8 @@ export default function WebsiteSettingsPage() {
 
   const pageMap = [
     { page: 'Home — Hero, Founder, Mission', tab: 'Hero / Founder / Mission & Vision tabs' },
-    { page: 'Home — Header & Footer branding', tab: 'Organization / Contact & Footer tabs' },
+    { page: 'Footer (all columns & links)', tab: 'Footer tab' },
+    { page: 'Home — Header branding', tab: 'Organization tab' },
     { page: 'Home — Sponsorship & Donation (bank + QR)', tab: 'Sponsorship & Donation tab' },
     { page: 'About, Privacy, Terms pages', tab: 'SEO & Pages tab' },
     { page: 'Contact page details', tab: 'Contact & Footer tab' },
@@ -93,7 +110,8 @@ export default function WebsiteSettingsPage() {
         <Tab label="Organization" />
         <Tab label="Founder" />
         <Tab label="Mission & Vision" />
-        <Tab label="Contact & Footer" />
+        <Tab label="Contact" />
+        <Tab label="Footer" />
         <Tab label="Sponsorship & Donation" />
         <Tab label="SEO & Pages" />
         <Tab label="Sections" />
@@ -136,20 +154,121 @@ export default function WebsiteSettingsPage() {
       )}
 
       {tab === 4 && (
+        <SectionFields title="Contact Page & Footer Contact Info">
+          {['address', 'phone', 'email', 'map_embed_url', 'facebook', 'twitter', 'instagram', 'youtube', 'whatsapp'].map((f) => (
+            <TextField key={f} label={f.replace(/_/g, ' ')} value={data.contact[f] || ''} onChange={(e) => set('contact', f, e.target.value)} fullWidth />
+          ))}
+          <Typography variant="body2" color="text.secondary">
+            Social URLs are used in the footer &quot;Connect with Us&quot; section. Manage visibility in the Footer tab.
+          </Typography>
+        </SectionFields>
+      )}
+
+      {tab === 5 && (
         <>
-          <SectionFields title="Contact">
-            {['address', 'phone', 'email', 'map_embed_url', 'facebook', 'twitter', 'instagram', 'youtube', 'whatsapp'].map((f) => (
-              <TextField key={f} label={f.replace(/_/g, ' ')} value={data.contact[f] || ''} onChange={(e) => set('contact', f, e.target.value)} fullWidth />
-            ))}
+          <SectionFields title="Footer — Brand Column">
+            <Typography variant="body2" color="text.secondary">
+              Organization name, taglines and website URL come from the <strong>Organization</strong> tab. Founder block uses the <strong>Founder</strong> tab.
+            </Typography>
+            <TextField
+              label="Extra text (optional)"
+              value={data.footer?.extra_text || ''}
+              onChange={(e) => set('footer', 'extra_text', e.target.value)}
+              fullWidth
+              multiline
+              rows={2}
+              helperText="Additional paragraph below brand info in footer"
+            />
+            <TextField
+              label="Background color"
+              value={data.footer?.background_color || '#1A1A1A'}
+              onChange={(e) => set('footer', 'background_color', e.target.value)}
+              fullWidth
+              helperText="Hex color e.g. #1A1A1A"
+            />
+            <FormControlLabel
+              control={<Switch checked={data.footer?.show_founder !== false} onChange={(e) => set('footer', 'show_founder', e.target.checked)} />}
+              label="Show founder name & designation"
+            />
           </SectionFields>
-          <SectionFields title="Footer">
-            <TextField label="Copyright" value={data.footer.copyright} onChange={(e) => set('footer', 'copyright', e.target.value)} fullWidth />
-            <FormControlLabel control={<Switch checked={!!data.footer.show_founder} onChange={(e) => set('footer', 'show_founder', e.target.checked)} />} label="Show founder in footer" />
+
+          <SectionFields title="Footer — Quick Links Column">
+            <FormControlLabel
+              control={<Switch checked={data.footer?.show_quick_links !== false} onChange={(e) => set('footer', 'show_quick_links', e.target.checked)} />}
+              label="Show quick links column"
+            />
+            <TextField
+              label="Quick links heading"
+              value={data.footer?.quick_links_title || 'Quick Links'}
+              onChange={(e) => set('footer', 'quick_links_title', e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Quick links (one per line: Label|/path)"
+              value={quickLinksToText(data.footer?.quick_links)}
+              onChange={(e) => set('footer', 'quick_links', textToQuickLinks(e.target.value))}
+              fullWidth
+              multiline
+              rows={12}
+              helperText="Example: About UWGEA|/about — add, remove or reorder links here"
+            />
+          </SectionFields>
+
+          <SectionFields title="Footer — Contact & Social Column">
+            <FormControlLabel
+              control={<Switch checked={data.footer?.show_contact_info !== false} onChange={(e) => set('footer', 'show_contact_info', e.target.checked)} />}
+              label="Show contact address, phone & email"
+            />
+            <TextField
+              label="Contact column heading"
+              value={data.footer?.contact_title || 'Contact'}
+              onChange={(e) => set('footer', 'contact_title', e.target.value)}
+              fullWidth
+            />
+            <FormControlLabel
+              control={<Switch checked={data.footer?.show_social_links !== false} onChange={(e) => set('footer', 'show_social_links', e.target.checked)} />}
+              label="Show social media icons"
+            />
+            <TextField
+              label="Social column heading"
+              value={data.footer?.connect_title || 'Connect with Us'}
+              onChange={(e) => set('footer', 'connect_title', e.target.value)}
+              fullWidth
+            />
+            <Typography variant="subtitle2" fontWeight={600}>Show social icons</Typography>
+            {[
+              ['show_facebook', 'Facebook'],
+              ['show_twitter', 'Twitter / X'],
+              ['show_instagram', 'Instagram'],
+              ['show_youtube', 'YouTube'],
+              ['show_whatsapp', 'WhatsApp'],
+            ].map(([key, label]) => (
+              <FormControlLabel
+                key={key}
+                control={<Switch checked={data.footer?.[key] !== false} onChange={(e) => set('footer', key, e.target.checked)} />}
+                label={label}
+              />
+            ))}
+            <Typography variant="body2" color="text.secondary">
+              Social URLs are edited in the Contact tab.
+            </Typography>
+          </SectionFields>
+
+          <SectionFields title="Footer — Legal Links & Copyright">
+            <FormControlLabel
+              control={<Switch checked={data.footer?.show_privacy_terms !== false} onChange={(e) => set('footer', 'show_privacy_terms', e.target.checked)} />}
+              label="Show Privacy & Terms links"
+            />
+            <TextField label="Privacy label" value={data.footer?.privacy_label || ''} onChange={(e) => set('footer', 'privacy_label', e.target.value)} fullWidth />
+            <TextField label="Privacy path" value={data.footer?.privacy_path || '/privacy'} onChange={(e) => set('footer', 'privacy_path', e.target.value)} fullWidth />
+            <TextField label="Terms label" value={data.footer?.terms_label || ''} onChange={(e) => set('footer', 'terms_label', e.target.value)} fullWidth />
+            <TextField label="Terms path" value={data.footer?.terms_path || '/terms'} onChange={(e) => set('footer', 'terms_path', e.target.value)} fullWidth />
+            <TextField label="Copyright text" value={data.footer?.copyright || ''} onChange={(e) => set('footer', 'copyright', e.target.value)} fullWidth multiline rows={2} />
           </SectionFields>
         </>
       )}
 
-      {tab === 5 && (
+      {tab === 6 && (
         <>
           <SectionFields title="Section Headings">
             {['section_title', 'sponsors_heading', 'donation_heading', 'qr_caption'].map((f) => (
@@ -186,7 +305,7 @@ export default function WebsiteSettingsPage() {
         </>
       )}
 
-      {tab === 6 && (
+      {tab === 7 && (
         <>
           <SectionFields title="SEO">
             {['title', 'description', 'keywords'].map((f) => (
@@ -205,7 +324,7 @@ export default function WebsiteSettingsPage() {
         </>
       )}
 
-      {tab === 7 && (
+      {tab === 8 && (
         <SectionFields title="Homepage Section Visibility">
           {Object.entries(data.section_visibility || {}).map(([key, val]) => (
             <FormControlLabel
