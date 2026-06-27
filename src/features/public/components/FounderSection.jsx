@@ -1,4 +1,4 @@
-import { Box, Container, Card, CardContent, Typography, Stack, Avatar, Link } from '@mui/material';
+import { Box, Container, Card, CardContent, Typography, Stack, Link } from '@mui/material';
 import { FadeIn } from '@/features/public/components/AnimatedCounter';
 
 export default function FounderSection({ founder }) {
@@ -10,13 +10,23 @@ export default function FounderSection({ founder }) {
             <CardContent sx={{ p: { xs: 3, md: 5 } }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' }, gap: 4, alignItems: 'center' }}>
                 <Box sx={{ textAlign: 'center' }}>
-                  <Avatar
+                  <Box
+                    component="img"
                     src={founder.photo_url || undefined}
                     alt={founder.name}
-                    sx={{ width: 180, height: 180, mx: 'auto', border: '4px solid', borderColor: 'primary.main' }}
-                  >
-                    {founder.name?.charAt(0)}
-                  </Avatar>
+                    sx={{
+                      width: '100%',
+                      maxWidth: 280,
+                      aspectRatio: '3 / 4',
+                      objectFit: 'cover',
+                      borderRadius: 3,
+                      mx: 'auto',
+                      display: 'block',
+                      border: '4px solid',
+                      borderColor: 'primary.main',
+                      boxShadow: 4,
+                    }}
+                  />
                   {founder.signature_url && (
                     <Box component="img" src={founder.signature_url} alt="Signature" sx={{ mt: 2, maxHeight: 60 }} />
                   )}

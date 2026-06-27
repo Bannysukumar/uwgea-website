@@ -35,7 +35,7 @@ export const DEFAULT_WEBSITE = {
     name: 'Rajyalakshmi Gujjala',
     designation: 'Founder & State President',
     org_line: 'UWGEA (236/24)',
-    photo_url: '',
+    photo_url: '/founder.jpg',
     biography: '',
     message: '',
     signature_url: '',
